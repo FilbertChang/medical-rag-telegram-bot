@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    container_name: medical-rag-bot
+    env_file:
+      - .env
+    volumes:
+      - ./faiss_index:/app/faiss_index
+      - ./data:/app/data
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: python bot.py
+
+  api:
+    build: .
+    container_name: medical-rag-api
+    env_file:
+      - .env
+    volumes:
+      - ./faiss_index:/app/faiss_index
+      - ./data:/app/data
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8000:8000"
+    command: python -m uvicorn api:app --host 0.0.0.0 --port 8000
