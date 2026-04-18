@@ -1,5 +1,4 @@
 # Medical RAG Chatbot (Telegram Bot)
-
 A Retrieval-Augmented Generation (RAG) system built on real medical transcription data,
 deployed as a Telegram bot. This project demonstrates how to combine vector search with
 a local LLM to answer medical questions grounded in real clinical notes.
@@ -7,7 +6,6 @@ a local LLM to answer medical questions grounded in real clinical notes.
 ---
 
 ## Purpose
-
 This project was built to explore how RAG systems can be applied in healthcare contexts,
 specifically to assist with querying medical transcription data. It uses the MTSamples
 dataset which contains real-world clinical transcriptions across various medical specialties.
@@ -18,18 +16,18 @@ answers based on retrieved medical documents — making it more reliable for dom
 ---
 
 ## Features
-
 - Ask natural language questions about medical conditions, symptoms, and procedures
 - Answers are grounded in 4,966 real medical transcriptions (MTSamples dataset)
 - Honestly says "I don't have that information" when data is insufficient
 - Runs fully locally — no paid API needed
 - Deployed as a Telegram bot for easy access and demo
 - REST API endpoint via FastAPI for programmatic access
+- **Dynamic knowledge base** — send PDF, TXT, DOCX, CSV, or XLSX files directly to the bot to expand its knowledge
+- **Smart ingestion** — automatically adds new chunks, updates outdated ones, and skips duplicates
 
 ---
 
 ## Tech Stack
-
 | Component | Tool |
 |---|---|
 | Language | Python |
@@ -40,6 +38,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 | Interface | Telegram Bot (python-telegram-bot) |
 | Dataset | MTSamples (Kaggle) |
 | API Framework | FastAPI + Uvicorn |
+| Observability | LangSmith |
 
 ---
 
@@ -50,47 +49,74 @@ medical-rag/
 ├── faiss_index/
 │   ├── index.faiss          # Vector database
 │   └── index.pkl            # Chunk metadata
-├── ingest.py                # Loads data and builds vector database
+├── ingest.py                # Loads dataset and builds initial vector database
+├── ingest_file.py           # Handles dynamic file ingestion (add/update/skip logic)
 ├── bot.py                   # Telegram bot and RAG logic
 ├── api.py                   # FastAPI REST API endpoint
 └── README.md
+
 ---
 
 ## How to Run
 
 ### 1. Install dependencies
-pip install langchain langchain-community langchain-ollama langchain-huggingface langchain-text-splitters faiss-cpu sentence-transformers pandas python-telegram-bot
+```bash
+pip install langchain langchain-community langchain-ollama langchain-huggingface langchain-text-splitters faiss-cpu sentence-transformers pandas python-telegram-bot pypdf python-docx openpyxl fastapi uvicorn
+```
 
 ### 2. Install Ollama and pull Llama 3.2
 Download Ollama from https://ollama.com then run:
+```bash
 ollama pull llama3.2
+```
 
 ### 3. Download the dataset
 Download MTSamples from https://www.kaggle.com/datasets/tboyle10/medicaltranscriptions
 and place `mtsamples.csv` inside the `data/` folder.
 
-### 4. Build the vector database
-python ingest.py
+### 4. Set up environment variables
 
-### 5. Run the Telegram bot
-Add your Telegram bot token to `bot.py` then run:
+Create a `.env` file in the project root:
+TELEGRAM_TOKEN=your_telegram_bot_token
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_PROJECT=medical-rag-bot
+
+### 5. Build the vector database
+```bash
+python ingest.py
+```
+
+### 6. Run the Telegram bot
+```bash
 python bot.py
+```
 
 ---
 
 ## How It Works
+
+### Question Answering
 User sends question on Telegram
 → Question is converted to a vector (embedding)
 → FAISS searches for the most relevant medical chunks
 → Top 3 chunks are passed to Llama 3.2 as context
-→ Llama 3.2 generates a friendly, empathetic answer guided by those chunks
-→ If context is relevant, it uses it — otherwise falls back to general medical knowledge
+→ Llama 3.2 generates a friendly, empathetic answer
 → Bot sends the answer back to the user
+
+### Dynamic File Ingestion
+User sends a file (PDF, TXT, DOCX, CSV, XLSX) to the bot
+→ File is parsed and split into chunks
+→ Each chunk is compared against existing knowledge base
+→ If no similar chunk exists → ADD
+→ If similar chunk exists and new one is longer → UPDATE
+→ If similar chunk exists and new one is same or shorter → SKIP
+→ FAISS index is saved with updates
+→ Bot reports how many chunks were added, updated, or skipped
 
 ---
 
 ## Dataset
-
 **MTSamples** — Medical Transcription Samples  
 Source: https://www.kaggle.com/datasets/tboyle10/medicaltranscriptions  
 4,966 medical transcriptions across specialties like Surgery, Cardiology, Neurology, and more.
@@ -98,24 +124,30 @@ Source: https://www.kaggle.com/datasets/tboyle10/medicaltranscriptions
 ---
 
 ## API Usage
+Start the API server:
+```bash
+python -m uvicorn api:app --reload
+```
 
-Start the API server: python -m uvicorn api:app --reload
 Then send a POST request to `/ask`:
+
 POST http://127.0.0.1:8000/ask
 Content-Type: application/json
 {
 "question": "What are the symptoms of diabetes?"
 }
 Response:
+```json
 {
-"answer": "...",
-"sources": ["..."]
+  "answer": "...",
+  "sources": ["..."]
 }
+```
+
 Interactive API docs available at: http://127.0.0.1:8000/docs
 
 ---
 
 ## Author
-
 Filbert  
 Fresh Graduate | Aspiring AI Engineer
