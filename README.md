@@ -25,6 +25,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 - **Dynamic knowledge base** — send PDF, TXT, DOCX, CSV, or XLSX files directly to the bot to expand its knowledge
 - **Smart ingestion** — automatically adds new chunks, updates outdated ones, and skips duplicates
 - **Clinical note analyzer** — extract diagnosis, symptoms, medications, and procedures from any clinical note
+- **Source tracking** — every answer shows which document and medical specialty it came from
 
 ---
 
@@ -103,7 +104,7 @@ User sends question on Telegram
 → FAISS searches for the most relevant medical chunks
 → Top 3 chunks are passed to Llama 3.2 as context
 → Llama 3.2 generates a friendly, empathetic answer
-→ Bot sends the answer back to the user
+→ Bot sends the answer back to the user with cited sources (file name + medical specialty)
 
 ### Dynamic File Ingestion
 User sends a file (PDF, TXT, DOCX, CSV, XLSX) to the bot
