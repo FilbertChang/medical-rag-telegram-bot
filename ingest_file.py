@@ -65,7 +65,7 @@ def ingest_file(file_path: str) -> dict:
         results = db.similarity_search_with_score(new_text, k=1)
 
         if not results:
-            db.add_documents([Document(page_content=new_text)])
+            db.add_documents([Document(page_content=new_text, metadata={"source": os.path.basename(file_path), "specialty": "Uploaded", "description": "User uploaded file"})])
             added += 1
             continue
 
@@ -73,13 +73,13 @@ def ingest_file(file_path: str) -> dict:
         # score in FAISS is L2 distance — lower = more similar
         if score > SIMILARITY_THRESHOLD:
             # No similar chunk found → ADD
-            db.add_documents([Document(page_content=new_text)])
+            db.add_documents([Document(page_content=new_text, metadata={"source": os.path.basename(file_path), "specialty": "Uploaded", "description": "User uploaded file"})])
             added += 1
         else:
             existing_text = top_doc.page_content.strip()
             if len(new_text) > len(existing_text):
                 # New chunk is longer → REPLACE (add new, old stays but gets buried)
-                db.add_documents([Document(page_content=new_text)])
+                db.add_documents([Document(page_content=new_text, metadata={"source": os.path.basename(file_path), "specialty": "Uploaded", "description": "User uploaded file"})])
                 updated += 1
             else:
                 # Same or shorter → SKIP

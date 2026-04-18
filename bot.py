@@ -41,7 +41,16 @@ def ask_question(question):
     docs = retriever.invoke(question)
     context = "\n\n".join([d.page_content for d in docs])
     chain = prompt | llm
-    return chain.invoke({"context": context, "question": question})
+    answer = chain.invoke({"context": context, "question": question})
+
+    sources = []
+    for i, doc in enumerate(docs, 1):
+        source = doc.metadata.get("source", "Unknown")
+        specialty = doc.metadata.get("specialty", "Unknown")
+        sources.append(f"{i}. {source} — {specialty}")
+
+    source_text = "\n".join(sources)
+    return f"{answer}\n\n📚 Sources:\n{source_text}"
 
 async def handle_analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     note = " ".join(context.args)
