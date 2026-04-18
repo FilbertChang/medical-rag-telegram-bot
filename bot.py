@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
 import os
 load_dotenv(dotenv_path="D:/medical-rag/.env")
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY") or ""
+os.environ["LANGCHAIN_PROJECT"] = "medical-rag-bot"
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 from langchain_community.vectorstores import FAISS
