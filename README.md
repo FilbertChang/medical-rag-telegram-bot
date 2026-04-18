@@ -27,6 +27,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 - **Clinical note analyzer** — extract diagnosis, symptoms, medications, and procedures from any clinical note
 - **Source tracking** — every answer shows which document and medical specialty it came from
 - **Section-aware chunking** — clinical notes are split by section headers (Assessment, Plan, Medications, etc.) for more precise retrieval
+- **Docker support** — fully containerized with Docker and docker-compose for easy deployment
 
 ---
 
@@ -167,6 +168,17 @@ Response:
 Interactive API docs available at: http://127.0.0.1:8000/docs
 
 ---
+
+## Docker Deployment
+Build and run with docker-compose:
+```bash
+docker-compose up --build
+```
+This starts two containers:
+- `medical-rag-bot` — the Telegram bot
+- `medical-rag-api` — the FastAPI REST API on port 8000
+
+> Note: Ollama must be running on your host machine before starting the containers.
 
 ## Author
 Filbert  
