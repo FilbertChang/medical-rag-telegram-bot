@@ -24,6 +24,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 - REST API endpoint via FastAPI for programmatic access
 - **Dynamic knowledge base** — send PDF, TXT, DOCX, CSV, or XLSX files directly to the bot to expand its knowledge
 - **Smart ingestion** — automatically adds new chunks, updates outdated ones, and skips duplicates
+- **Clinical note analyzer** — extract diagnosis, symptoms, medications, and procedures from any clinical note
 
 ---
 
@@ -115,6 +116,23 @@ User sends a file (PDF, TXT, DOCX, CSV, XLSX) to the bot
 → Bot reports how many chunks were added, updated, or skipped
 
 ---
+
+### Clinical Note Analyzer
+```
+User sends /analyze followed by a clinical note
+→ Llama 3.2 extracts structured information from the note
+→ Bot replies with:
+   📋 Diagnosis
+   🤒 Symptoms
+   💊 Medications
+   🏥 Procedures
+```
+
+## Bot Commands
+| Command | Description |
+|---|---|
+| `/start` | Welcome message and usage instructions |
+| `/analyze <note>` | Extract diagnosis, symptoms, medications, and procedures from a clinical note |
 
 ## Dataset
 **MTSamples** — Medical Transcription Samples  
