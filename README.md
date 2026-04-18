@@ -24,6 +24,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 - Honestly says "I don't have that information" when data is insufficient
 - Runs fully locally — no paid API needed
 - Deployed as a Telegram bot for easy access and demo
+- REST API endpoint via FastAPI for programmatic access
 
 ---
 
@@ -38,6 +39,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 | LLM | Ollama (Llama 3.2) |
 | Interface | Telegram Bot (python-telegram-bot) |
 | Dataset | MTSamples (Kaggle) |
+| API Framework | FastAPI + Uvicorn |
 
 ---
 
@@ -50,8 +52,8 @@ medical-rag/
 │   └── index.pkl            # Chunk metadata
 ├── ingest.py                # Loads data and builds vector database
 ├── bot.py                   # Telegram bot and RAG logic
+├── api.py                   # FastAPI REST API endpoint
 └── README.md
-
 ---
 
 ## How to Run
@@ -92,6 +94,24 @@ User sends question on Telegram
 **MTSamples** — Medical Transcription Samples  
 Source: https://www.kaggle.com/datasets/tboyle10/medicaltranscriptions  
 4,966 medical transcriptions across specialties like Surgery, Cardiology, Neurology, and more.
+
+---
+
+## API Usage
+
+Start the API server: python -m uvicorn api:app --reload
+Then send a POST request to `/ask`:
+POST http://127.0.0.1:8000/ask
+Content-Type: application/json
+{
+"question": "What are the symptoms of diabetes?"
+}
+Response:
+{
+"answer": "...",
+"sources": ["..."]
+}
+Interactive API docs available at: http://127.0.0.1:8000/docs
 
 ---
 
