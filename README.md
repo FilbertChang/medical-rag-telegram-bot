@@ -26,6 +26,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 - **Smart ingestion** — automatically adds new chunks, updates outdated ones, and skips duplicates
 - **Clinical note analyzer** — extract diagnosis, symptoms, medications, and procedures from any clinical note
 - **Source tracking** — every answer shows which document and medical specialty it came from
+- **Section-aware chunking** — clinical notes are split by section headers (Assessment, Plan, Medications, etc.) for more precise retrieval
 
 ---
 
