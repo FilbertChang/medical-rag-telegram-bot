@@ -47,6 +47,7 @@ answers based on retrieved medical documents — making it more reliable for dom
 ---
 
 ## Project Structure
+```
 medical-rag/
 ├── data/
 │   └── mtsamples.csv        # Medical transcriptions dataset
@@ -58,6 +59,7 @@ medical-rag/
 ├── bot.py                   # Telegram bot and RAG logic
 ├── api.py                   # FastAPI REST API endpoint
 └── README.md
+```
 
 ---
 
